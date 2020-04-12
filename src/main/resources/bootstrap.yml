@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: merchant-service-app
+  cloud:
+    consul:
+      enabled: false
+
+

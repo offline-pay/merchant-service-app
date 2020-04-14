@@ -1,15 +1,13 @@
 package com.offlinepay.merchant.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import java.time.LocalDateTime;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "Merchant")
@@ -20,18 +18,24 @@ import java.time.LocalDateTime;
 public class MerchantEntity {
     @Id
     @GeneratedValue //auto
-    Integer merchantId;
+    Long id;
 
-    String prefix;
-    String firstName;
-    String lastName;
-    String email;
-    String bookingReference;
-    String bookingDescription;
-    Integer amountMajor;
-    Integer amountMinor;
-    String currency;
-    String locale;
-    LocalDateTime linkValidity;
+    Long merchantId;
+    Long resellerId;
+    String merchantName;
+    String merchantEmail;
 
+    @JsonManagedReference
+    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<ValidityOptionsEntity> linkValidity;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<LocaleOptionsEntity> locale;
+
+    Integer templateId;
+    Integer pageId;
+    Boolean pspBranding;
+    Boolean thirdParty;
+    Boolean tokenization;
 }

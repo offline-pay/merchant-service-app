@@ -87,4 +87,32 @@ public class MerchantService {
         return merchantRepository.findAll();
     }
 
+
+    /**
+     * TO DO - fix updateMerchant logic
+     * NOT TESTED
+     *
+     */
+    public MerchantEntity updateMerchant(Merchant merchant) {
+
+        MerchantEntity merchantEntity = merchantRepository.save(convert(merchant));
+
+        log.debug("MerchantEntity :: {}", merchantEntity);
+
+        List<ValidityOptionsEntity> validityOptions = new ArrayList<>();
+        List<LocaleOptionsEntity> localeOptions = new ArrayList<>();
+
+        Arrays.stream(merchant.getValidityOptions()).forEach(i -> {
+            validityOptions.add(persistValidityValue(i, merchantEntity));
+        });
+
+        Arrays.stream(merchant.getLocaleOptions()).forEach(i -> {
+            localeOptions.add(persistLocaleValue(i, merchantEntity));
+        });
+
+        merchantEntity.setLinkValidity(validityOptions);
+        merchantEntity.setLocale(localeOptions);
+
+        return merchantEntity;
+    }
 }

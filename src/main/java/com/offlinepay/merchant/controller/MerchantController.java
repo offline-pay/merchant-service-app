@@ -46,4 +46,11 @@ public class MerchantController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PutMapping("/merchant/{id}")
+    ResponseEntity<MerchantEntity> updateGroup(@RequestBody Merchant merchant) {
+        log.info("Request to update group: {}", merchant);
+        MerchantEntity entity = merchantService.updateMerchant(merchant);
+        return new ResponseEntity<>(entity, HttpStatus.OK);
+    }
 }

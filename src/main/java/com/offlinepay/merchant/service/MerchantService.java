@@ -1,118 +1,59 @@
 package com.offlinepay.merchant.service;
 
-import com.offlinepay.merchant.entity.LocaleOptionsEntity;
 import com.offlinepay.merchant.entity.MerchantEntity;
-import com.offlinepay.merchant.entity.ValidityOptionsEntity;
-import com.offlinepay.merchant.model.Merchant;
-import com.offlinepay.merchant.repository.LocaleOptionsRepository;
+import com.offlinepay.merchant.model.MerchantDto;
 import com.offlinepay.merchant.repository.MerchantRepository;
-import com.offlinepay.merchant.repository.ValidityOptionsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 
-import static com.offlinepay.merchant.converter.TypeConverter.convert;
+import static com.offlinepay.merchant.mapper.MerchantMapper.INSTANCE;
 
 @Slf4j
 @Service
 public class MerchantService {
 
     final MerchantRepository merchantRepository;
-    final LocaleOptionsRepository localeOptionsRepository;
-    final ValidityOptionsRepository validityOptionsRepository;
 
-    public MerchantService(MerchantRepository merchantRepository, LocaleOptionsRepository localeOptionsRepository,
-                           ValidityOptionsRepository validityOptionsRepository) {
+    public MerchantService(MerchantRepository merchantRepository) {
         this.merchantRepository = merchantRepository;
-        this.localeOptionsRepository = localeOptionsRepository;
-        this.validityOptionsRepository = validityOptionsRepository;
     }
 
-    /**
-     *
-     */
-    public MerchantEntity addMerchant(Merchant merchant) {
 
-        MerchantEntity merchantEntity = merchantRepository.save(convert(merchant));
+    public MerchantDto addMerchant(MerchantDto merchantDto) {
+
+        MerchantEntity merchantEntity = merchantRepository.save(INSTANCE.toMerchantEntity(merchantDto));
 
         log.debug("MerchantEntity :: {}", merchantEntity);
 
-        List<ValidityOptionsEntity> validityOptions = new ArrayList<>();
-        List<LocaleOptionsEntity> localeOptions = new ArrayList<>();
-
-        Arrays.stream(merchant.getValidityOptions()).forEach(i -> {
-            validityOptions.add(persistValidityValue(i, merchantEntity));
-        });
-
-        Arrays.stream(merchant.getLocaleOptions()).forEach(i -> {
-            localeOptions.add(persistLocaleValue(i, merchantEntity));
-        });
-
-        merchantEntity.setLinkValidity(validityOptions);
-        merchantEntity.setLocale(localeOptions);
-
-        return merchantEntity;
+        return INSTANCE.ToMerchantDto(merchantEntity);
     }
 
 
-    private ValidityOptionsEntity persistValidityValue(String value, MerchantEntity merchant) {
+    public MerchantDto getMerchant(Long id) {
+        Optional<MerchantEntity> merchantEntity = merchantRepository.findById(id);
 
-        ValidityOptionsEntity validity = ValidityOptionsEntity.builder()
-                .merchant(merchant)
-                .validity(value)
-                .build();
-
-        return validityOptionsRepository.save(validity);
+        if (merchantEntity.isPresent()) {
+            return INSTANCE.ToMerchantDto(merchantEntity.get());
+        } else {
+            throw new EntityNotFoundException(String.valueOf(id));
+        }
     }
 
 
-    private LocaleOptionsEntity persistLocaleValue(String value, MerchantEntity merchant) {
-
-        LocaleOptionsEntity validity = LocaleOptionsEntity.builder()
-                .merchant(merchant)
-                .locale(value)
-                .build();
-
-        return localeOptionsRepository.save(validity);
+    public Iterable<MerchantDto> getMerchants() {
+        return INSTANCE.toMerchantDtoList(merchantRepository.findAll());
     }
 
 
-    public Optional<MerchantEntity> getMerchant(Long id) {
-        return merchantRepository.findById(id);
-    }
+    public MerchantDto updateMerchant(MerchantDto merchantDto) {
 
-
-    public Iterable<MerchantEntity> getMerchants() {
-        return merchantRepository.findAll();
-    }
-
-
-    /**
-     * TO DO - fix updateMerchant logic
-     * NOT TESTED
-     *
-     */
-    public MerchantEntity updateMerchant(Merchant merchant) {
-
-        MerchantEntity merchantEntity = merchantRepository.save(convert(merchant));
+        MerchantEntity merchantEntity = merchantRepository.save(INSTANCE.toMerchantEntity(merchantDto));
 
         log.debug("MerchantEntity :: {}", merchantEntity);
 
-        List<ValidityOptionsEntity> validityOptions = new ArrayList<>();
-        List<LocaleOptionsEntity> localeOptions = new ArrayList<>();
-
-        Arrays.stream(merchant.getValidityOptions()).forEach(i -> {
-            validityOptions.add(persistValidityValue(i, merchantEntity));
-        });
-
-        Arrays.stream(merchant.getLocaleOptions()).forEach(i -> {
-            localeOptions.add(persistLocaleValue(i, merchantEntity));
-        });
-
-        merchantEntity.setLinkValidity(validityOptions);
-        merchantEntity.setLocale(localeOptions);
-
-        return merchantEntity;
+        return INSTANCE.ToMerchantDto(merchantEntity);
     }
 }

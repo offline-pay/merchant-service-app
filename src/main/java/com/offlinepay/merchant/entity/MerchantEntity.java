@@ -1,13 +1,12 @@
 package com.offlinepay.merchant.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Merchant")
@@ -25,17 +24,42 @@ public class MerchantEntity {
     String merchantName;
     String merchantEmail;
 
+    @ElementCollection
+    @CollectionTable(name = "MerchantCurrency", joinColumns = @JoinColumn(name = "merchantId"))
+    @Column(name = "currency")
+    Set<String> currency;
+
+    @ElementCollection
+    @CollectionTable(name = "MerchantLocale", joinColumns = @JoinColumn(name = "merchantId"))
+    @Column(name = "locale")
+    Set<String> locale;
+
+
+/*    @JsonManagedReference
+    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    List<CurrencyEntity> currency;*/
+
+    /*
     @JsonManagedReference
     @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<ValidityOptionsEntity> linkValidity;
+    */
 
-    @JsonManagedReference
+    /*@JsonManagedReference
     @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<LocaleOptionsEntity> locale;
+    List<LocaleEntity> locale;
+*/
+    String softDescriptor;
+    String reference1;
+    String reference2;
 
-    Integer templateId;
-    Integer pageId;
-    Boolean pspBranding;
-    Boolean thirdParty;
-    Boolean tokenization;
+    @Column(name = "PSPBranding")
+    Boolean hasPSPBranding;
+
+    @Column(name = "ThirdParty")
+    Boolean hasThirdParty;
+
+    @Column(name = "Tokenization")
+    Boolean hasTokenization;
+
 }

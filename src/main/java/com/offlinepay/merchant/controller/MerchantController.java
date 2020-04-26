@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @CrossOrigin
 @RestController
-@RequestMapping("api/v1")
+@RequestMapping("/v1/merchants")
 @Tag(name = "Merchant", description = "The Merchant Management API")
 public class MerchantController {
 
@@ -25,8 +25,7 @@ public class MerchantController {
         this.merchantService = merchantService;
     }
 
-
-    @PostMapping("/merchants")
+    @PostMapping
     @Operation(summary = "Add a new Merchant", description = "Add a new Merchant based on input data", responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server Error")
@@ -38,12 +37,12 @@ public class MerchantController {
     }
 
 
-    @GetMapping("/merchants/{id}")
+    @GetMapping("/{id}")
     @Operation(summary = "Get a merchant", description = "Get a Merchant for given Id", responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server Error")
     })
-    ResponseEntity<?> getMerchant(@PathVariable Long id) {
+    ResponseEntity<MerchantDto> getMerchant(@PathVariable Long id) {
         try {
             MerchantDto merchantDto = merchantService.getMerchant(id);
             log.debug("MerchantDto :: {}", merchantDto);
@@ -57,7 +56,7 @@ public class MerchantController {
     }
 
 
-    @GetMapping("/merchants")
+    @GetMapping
     @Operation(summary = "Get all merchants", description = "Get list of all the Merchants", responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server Error")
@@ -82,7 +81,7 @@ public class MerchantController {
     }
 
 
-    @PutMapping("/merchants/{id}")
+    @PutMapping("/{id}")
     @Operation(summary = "Update merchant", description = "Update merchant", responses = {
             @ApiResponse(responseCode = "201", description = "Success"),
             @ApiResponse(responseCode = "500", description = "Server Error")

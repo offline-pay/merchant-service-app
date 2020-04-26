@@ -15,6 +15,7 @@ import java.util.Set;
 @EqualsAndHashCode
 @ToString
 public class MerchantEntity {
+
     @Id
     @GeneratedValue //auto
     Long id;
@@ -34,21 +35,6 @@ public class MerchantEntity {
     @Column(name = "locale")
     Set<String> locale;
 
-
-/*    @JsonManagedReference
-    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<CurrencyEntity> currency;*/
-
-    /*
-    @JsonManagedReference
-    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<ValidityOptionsEntity> linkValidity;
-    */
-
-    /*@JsonManagedReference
-    @OneToMany(mappedBy = "merchant", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    List<LocaleEntity> locale;
-*/
     String softDescriptor;
     String reference1;
     String reference2;
